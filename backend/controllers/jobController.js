@@ -5,24 +5,9 @@ exports.getAllJobs = async (req, res) => {
   res.json(jobs);
 };
 
-exports.applyJob = async (req, res) => {
-  const job = await Job.findById(req.params.id);
-
-  if (!job) return res.status(404).json({ message: "Job not found" });
-
-  if (job.applicants.includes(req.user.id)) {
-    return res.status(400).json({ message: "Already applied" });
-  }
-
-  job.applicants.push(req.user.id);
-  await job.save();
-
-  res.json({ message: "Applied successfully" });
-};
-
 exports.createJob = async (req, res) => {
   try {
-    const { title, company, location, description } = req.body;
+    const { title, company, location, description, requirements } = req.body;
 
     if (!title || !company || !location || !description) {
       return res.status(400).json({ message: "All fields are required" });
@@ -33,6 +18,7 @@ exports.createJob = async (req, res) => {
       company,
       location,
       description,
+      requirements,
       recruiter: req.user.id
     });
 

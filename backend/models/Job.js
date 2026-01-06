@@ -5,16 +5,19 @@ const jobSchema = new mongoose.Schema({
   company: String,
   location: String,
   description: String,
+
+  // 🔹 NEW: structured requirements
+  requirements: {
+    skills: [String],
+    minCGPA: { type: Number, default: 0 },
+    keywords: [String],
+    experience: String
+  },
+
   recruiter: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User"
-  },
-  applicants: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User"
-    }
-  ]
+  }
 }, { timestamps: true });
 
 module.exports = mongoose.model("Job", jobSchema);

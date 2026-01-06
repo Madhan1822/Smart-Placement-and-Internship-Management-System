@@ -52,98 +52,117 @@ const AdminDashboard = () => {
     fetchApplications();
   }, [token]);
 
-  const deleteUser = async (id) => {
+  const toggleUserStatus = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/admin/user/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setUsers(users.filter(u => u._id !== id));
+      const res = await axios.put(
+        `http://localhost:5000/api/admin/user/${id}/toggle`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setUsers(users.map(u =>
+        u._id === id ? { ...u, isActive: res.data.isActive } : u
+      ));
     } catch (err) {
-      console.error(err);
-      alert("Failed to delete user");
+      alert("Failed to update status");
     }
   };
 
   const recruiters = users.filter(u => u.role === "recruiter");
   const students = users.filter(u => u.role === "student");
 
-  return (
-    <div className="dashboard">
-      <h2>Admin Dashboard</h2>
+return (
+  <div className="dashboard">
+    <h2>Admin Dashboard</h2>
 
-      {/* ======== Tabs ======== */}
-      <div className="admin-tabs">
-        <button
-          className={activeTab === "recruiters" ? "active-tab" : ""}
-          onClick={() => setActiveTab("recruiters")}
-        >
-          Recruiters
-        </button>
-        <button
-          className={activeTab === "students" ? "active-tab" : ""}
-          onClick={() => setActiveTab("students")}
-        >
-          Students
-        </button>
-      </div>
-
-      {/* ======== Recruiters Table ======== */}
-      {activeTab === "recruiters" && (
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Details</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {recruiters.map(u => {
-              const userJobs = jobs.filter(j => j.recruiter && j.recruiter._id === u._id);
-              return (
-                <tr key={u._id}>
-                  <td>{u.name}</td>
-                  <td>{userJobs.length > 0 ? userJobs.map(j => j.title).join(", ") : "No jobs"}</td>
-                  <td>
-                    <button onClick={() => deleteUser(u._id)}>Delete</button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      )}
-
-      {/* ======== Students Table ======== */}
-      {activeTab === "students" && (
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Details</th>
-            </tr>
-          </thead>
-          <tbody>
-            {students.map(u => {
-              const userApplications = applications.filter(
-                a => a.studentId && a.studentId._id === u._id
-              );
-              return (
-                <tr key={u._id}>
-                  <td>{u.name}</td>
-                  <td>
-                    {userApplications.length > 0
-                      ? userApplications.map(a => a.jobId.title).join(", ")
-                      : "No applications"}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      )}
+    {/* ======== Tabs ======== */}
+    <div className="admin-tabs">
+      <button
+        className={activeTab === "recruiters" ? "active-tab" : ""}
+        onClick={() => setActiveTab("recruiters")}
+      >
+        Recruiters
+      </button>
+      <button
+        className={activeTab === "students" ? "active-tab" : ""}
+        onClick={() => setActiveTab("students")}
+      >
+        Students
+      </button>
     </div>
-  );
+
+    {/* ======== Recruiters Table ======== */}
+    {activeTab === "recruiters" && (
+      <table className="admin-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Jobs Posted</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {recruiters.map(u => {
+            const userJobs = jobs.filter(
+              j => j.recruiter && j.recruiter._id === u._id
+            );
+
+            return (
+              <tr key={u._id}>
+                <td>{u.name}</td>
+                <td>
+                  {userJobs.length > 0
+                    ? userJobs.map(j => j.title).join(", ")
+                    : "No jobs"}
+                </td>
+                <td>{u.isActive ? "Active" : "Disabled"}</td>
+                <td>
+                  <button onClick={() => toggleUserStatus(u._id)}>
+                    {u.isActive ? "Disable" : "Enable"}
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    )}
+
+    {/* ======== Students Table ======== */}
+    {activeTab === "students" && (
+      <table className="admin-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Applications</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {students.map(u => {
+            const userApplications = applications.filter(
+              a => a.studentId && a.studentId._id === u._id
+            );
+
+            return (
+              <tr key={u._id}>
+                <td>{u.name}</td>
+                <td>
+                  {userApplications.length > 0
+                    ? userApplications.map(a => a.jobId.title).join(", ")
+                    : "No applications"}
+                </td>
+                <td>{u.isActive ? "Active" : "Disabled"}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    )}
+  </div>
+);
+
 };
 
 export default AdminDashboard;
