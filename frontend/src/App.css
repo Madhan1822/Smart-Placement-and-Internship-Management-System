@@ -1,0 +1,556 @@
+/* ==============================
+   GLOBAL RESET
+============================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ==============================
+   BODY & ROOT FULL SCREEN
+============================== */
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #8e44ad, #3498db);
+  color: #fff;
+  line-height: 1.6;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==============================
+   HEADER
+============================== */
+.header {
+  height: 70px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  padding: 0 30px;
+  background: linear-gradient(135deg, #1f1c2c, #928dab);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.header h2 {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ffeaa7;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.header button {
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.header button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+/* ==============================
+   FOOTER
+============================== */
+.footer {
+  text-align: center;
+  padding: 15px;
+  background: #1f1c2c;
+  color: white;
+  font-size: 0.85rem;
+  margin-top: auto;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+}
+
+/* ==============================
+   AUTH PAGES CENTER
+============================== */
+.login-container,
+.register-container {
+  width: 360px;
+  padding: 45px 40px;
+  border-radius: 25px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+  text-align: center;
+  animation: fadeIn 0.5s ease;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.auth-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* ==============================
+   INPUTS & SELECT
+============================== */
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 18px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 1rem;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 10px rgba(255,255,255,0.2);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(255,255,255,0.7);
+}
+
+/* ==============================
+   BUTTONS
+============================== */
+button {
+  padding: 12px;
+  width: 100%;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+  color: white;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* ==============================
+   DASHBOARD LAYOUT
+============================== */
+.dashboard {
+  padding: 40px 60px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.dashboard h2 {
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.dashboard h3 {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+/* ==============================
+   TABLES
+============================== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 40px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+th, td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+th {
+  background: rgba(255, 255, 255, 0.15);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+tr:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+td button {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+td button:hover {
+  transform: scale(1.05);
+}
+
+/* ==============================
+   JOB GRID (2 PER ROW)
+============================== */
+.jobs-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+  margin-top: 30px;
+}
+
+/* ==============================
+   JOB CARD
+============================== */
+.job-card {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 25px;
+  border-radius: 20px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.job-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+.job-card h3 {
+  color: #ffeaa7;
+  margin-bottom: 8px;
+  font-size: 1.2rem;
+}
+
+.job-card p {
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+}
+
+.job-card h4 {
+  margin-bottom: 5px;
+  font-size: 1.1rem;
+}
+
+/* ==============================
+   SMALL APPLY BUTTON
+============================== */
+.apply-btn {
+  width: auto;
+  padding: 6px 18px;
+  font-size: 0.85rem;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #74b9ff, #a29bfe);
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.apply-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* ==============================
+   JOB FORM (RECRUITER)
+============================== */
+.job-form {
+  max-width: 520px;
+  margin: 40px auto;
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+/* ==============================
+   ANIMATIONS
+============================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==============================
+   RESPONSIVE
+============================== */
+@media (max-width: 900px) {
+  .jobs-container {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard {
+    padding: 20px;
+  }
+
+  .header {
+    padding: 0 15px;
+  }
+
+  .header h2 {
+    font-size: 1.2rem;
+  }
+
+  table {
+    font-size: 0.9rem;
+  }
+
+  th, td {
+    padding: 10px;
+  }
+}
+
+/* ==============================
+   JOB LIST - SINGLE COLUMN FOR STUDENT DASHBOARD
+============================== */
+.student-jobs-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.student-job-card {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.student-job-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+.student-job-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.student-job-info h3 {
+  color: #ffeaa7;
+  font-size: 1.2rem;
+  margin-bottom: 2px;
+}
+
+.student-job-info p {
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.student-job-info h4 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+/* small apply button */
+.student-apply-btn {
+  padding: 5px 14px;
+  font-size: 0.8rem;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #74b9ff, #a29bfe);
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.student-apply-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* responsive */
+@media (max-width: 600px) {
+  .student-job-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .student-apply-btn {
+    align-self: flex-end;
+  }
+}
+
+/* ==============================
+   SMALL APPLY BUTTON FOR STUDENT DASHBOARD
+============================== */
+.student-apply-btn {
+  padding: 4px 12px;       /* smaller padding */
+  font-size: 0.75rem;      /* smaller font */
+  border-radius: 15px;     /* rounded edges */
+  background: linear-gradient(135deg, #74b9ff, #a29bfe);
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.student-apply-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* ==============================
+   JOBS TABLE
+============================== */
+.jobs-table-container {
+  max-width: 900px;
+  margin: 0 auto;
+  margin-top: 30px;
+  background: rgba(255,255,255,0.05);
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+.jobs-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.jobs-table th, .jobs-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.jobs-table th {
+  background: rgba(255,255,255,0.15);
+  font-weight: 600;
+  color: #ffeaa7;
+}
+
+.jobs-table tr:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.jobs-table td button.apply-btn {
+  padding: 5px 12px;          /* small button */
+  font-size: 0.75rem;         /* smaller text */
+  border-radius: 15px;
+  background: linear-gradient(135deg, #74b9ff, #a29bfe);
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.jobs-table td button.apply-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* ===== Admin Tabs ===== */
+.admin-tabs {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.admin-tabs button {
+  padding: 8px 20px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.1);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 500;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.admin-tabs button:hover {
+  transform: translateY(-2px);
+  background: rgba(255,255,255,0.2);
+}
+
+.admin-tabs .active-tab {
+  background: linear-gradient(135deg, #74b9ff, #a29bfe);
+}
+
+/* ===== Admin Table ===== */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(255,255,255,0.05);
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+.admin-table th, .admin-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.admin-table th {
+  background: rgba(255,255,255,0.15);
+  font-weight: 600;
+  color: #ffeaa7;
+}
+
+.admin-table tr:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.admin-table td button {
+  padding: 5px 12px;
+  font-size: 0.75rem;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.admin-table td button:hover {
+  transform: translateY(-2px);
+}
