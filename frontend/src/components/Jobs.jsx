@@ -3,27 +3,45 @@ import axios from "axios";
 
 const Jobs = () => {
   const [jobs, setJobs] = useState([]);
+  const [appliedJobs, setAppliedJobs] = useState([]);
+
   const token = localStorage.getItem("token");
 
   useEffect(() => {
+  // 1️⃣ Fetch all jobs
     axios.get("http://localhost:5000/api/jobs", {
       headers: { Authorization: `Bearer ${token}` }
-    }).then(res => setJobs(res.data))
-      .catch(err => console.log(err));
+    })
+    .then(res => setJobs(res.data))
+    .catch(err => console.log(err));
+
+    // 2️⃣ Fetch jobs already applied by student
+    axios.get("http://localhost:5000/api/applications/my", {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    .then(res => {
+      setAppliedJobs(res.data.map(app => app.jobId));
+    })
+    .catch(err => console.log(err));
+
   }, [token]);
+
 
   const applyJob = async (id) => {
     try {
       await axios.post(
-        `http://localhost:5000/api/jobs/apply/${id}`,
+        `http://localhost:5000/api/applications/apply/${id}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
+      setAppliedJobs(prev => [...prev, id]); // 👈 update instantly
       alert("Applied successfully");
     } catch (err) {
       alert(err.response?.data?.message || "Error applying for job");
     }
   };
+
 
   return (
     <div className="jobs-table-container">
@@ -50,9 +68,10 @@ const Jobs = () => {
                 <td>
                   <button
                     className="apply-btn"
+                    disabled={appliedJobs.includes(job._id)}
                     onClick={() => applyJob(job._id)}
                   >
-                    Apply
+                    {appliedJobs.includes(job._id) ? "Applied" : "Apply"}
                   </button>
                 </td>
               </tr>

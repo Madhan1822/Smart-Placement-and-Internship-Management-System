@@ -13,15 +13,29 @@ const applicationSchema = new mongoose.Schema({
     required: true
   },
 
-  // 🔹 AI-ready status
+  // 🔹 Recruiter decision status
+  status: {
+    type: String,
+    enum: ["APPLIED", "ACCEPTED", "REJECTED"],
+    default: "APPLIED"
+  },
+
+  // 🔹 Eligibility logic (AI-ready)
   eligibilityStatus: {
     type: String,
     enum: ["PENDING", "ELIGIBLE", "NOT_ELIGIBLE"],
     default: "PENDING"
   },
 
-  matchedSkills: [String],
-  score: { type: Number, default: 0 }
+  matchedSkills: {
+    type: [String],
+    default: []
+  },
+
+  score: {
+    type: Number,
+    default: 0
+  }
 
 }, { timestamps: true });
 

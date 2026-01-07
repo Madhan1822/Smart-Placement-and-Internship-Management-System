@@ -6,7 +6,7 @@ exports.createJob = async (req, res) => {
   try {
     const job = await Job.create({
       ...req.body,
-      recruiterId: req.user.id
+      recruiter: req.user.id
     });
     res.status(201).json(job);
   } catch (err) {
@@ -27,5 +27,28 @@ exports.viewApplicants = async (req, res) => {
     res.json(applications);
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getApplicantsForJob = async (req, res) => {
+  try {
+    const jobId = req.params.jobId;
+
+    const applications = await Application.find({ jobId })
+      .populate("studentId", "name email")
+      .populate("jobId", "title company");
+
+    res.json(applications);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getMyJobs = async (req, res) => {
+  try {
+    const jobs = await Job.find({ recruiter: req.user.id });
+    res.json(jobs);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch jobs" });
   }
 };
