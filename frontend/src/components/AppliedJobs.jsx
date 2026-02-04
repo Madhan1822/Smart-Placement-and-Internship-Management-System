@@ -15,7 +15,9 @@ const AppliedJobs = () => {
 
   return (
     <div>
-      <h2>My Applied Jobs</h2>
+      <h2 style={{ textAlign: "center", marginBottom: "30px" }}>
+        My Applied Jobs
+      </h2>
 
       {applications.length === 0 ? (
         <p>No applications yet</p>
@@ -33,7 +35,7 @@ const AppliedJobs = () => {
               <tr key={app._id}>
                 <td>{app.jobId?.title}</td>
                 <td>{app.jobId?.company}</td>
-                <td>{app.eligibilityStatus}</td>
+                <td>{app.status}</td>
               </tr>
             ))}
           </tbody>

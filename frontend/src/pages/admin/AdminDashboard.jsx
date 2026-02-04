@@ -1,168 +1,93 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import AdminLayout from "./AdminLayout";
+import { FaUsers, FaUserGraduate, FaUserTie, FaBriefcase, FaSyncAlt } from "react-icons/fa";
 
 const AdminDashboard = () => {
-  const [users, setUsers] = useState([]);
-  const [jobs, setJobs] = useState([]);
-  const [applications, setApplications] = useState([]);
-  const [activeTab, setActiveTab] = useState("recruiters"); // new state for tabs
   const token = localStorage.getItem("token");
+  const [stats, setStats] = useState({});
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await axios.get("http://localhost:5000/api/admin/users", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setUsers(res.data);
-      } catch (err) {
-        console.error(err);
-        alert("Admin access error");
-      }
-    };
-    fetchUsers();
-  }, [token]);
-
-  useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        const res = await axios.get("http://localhost:5000/api/admin/jobs", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setJobs(res.data);
-      } catch (err) {
-        console.error(err);
-        alert("Admin access error");
-      }
-    };
-    fetchJobs();
-  }, [token]);
-
-  useEffect(() => {
-    const fetchApplications = async () => {
-      try {
-        const res = await axios.get("http://localhost:5000/api/admin/applications", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setApplications(res.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchApplications();
-  }, [token]);
-
-  const toggleUserStatus = async (id) => {
+  const fetchStats = async () => {
     try {
-      const res = await axios.put(
-        `http://localhost:5000/api/admin/user/${id}/toggle`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      setUsers(users.map(u =>
-        u._id === id ? { ...u, isActive: res.data.isActive } : u
-      ));
+      setLoading(true);
+      const res = await axios.get("http://localhost:5000/api/admin/stats", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setStats(res.data);
+      setLoading(false);
     } catch (err) {
-      alert("Failed to update status");
+      console.error(err);
+      alert("Failed to fetch stats");
+      setLoading(false);
     }
   };
 
-  const recruiters = users.filter(u => u.role === "recruiter");
-  const students = users.filter(u => u.role === "student");
+  useEffect(() => {
+    fetchStats();
+  }, [token]);
 
-return (
-  <div className="dashboard">
-    <h2>Admin Dashboard</h2>
+  const statsData = [
+    { label: "Total Users", value: stats.totalUsers || 0, icon: <FaUsers />, color: "#4338ca" },
+    { label: "Students", value: stats.totalStudents || 0, icon: <FaUserGraduate />, color: "#059669" },
+    { label: "Recruiters", value: stats.totalRecruiters || 0, icon: <FaUserTie />, color: "#d97706" },
+    { label: "Total Jobs", value: stats.totalJobs || 0, icon: <FaBriefcase />, color: "#e11d48" }
+  ];
 
-    {/* ======== Tabs ======== */}
-    <div className="admin-tabs">
-      <button
-        className={activeTab === "recruiters" ? "active-tab" : ""}
-        onClick={() => setActiveTab("recruiters")}
-      >
-        Recruiters
-      </button>
-      <button
-        className={activeTab === "students" ? "active-tab" : ""}
-        onClick={() => setActiveTab("students")}
-      >
-        Students
-      </button>
-    </div>
+  return (
+    <AdminLayout>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+        <h2>Admin Dashboard</h2>
+        <button 
+          onClick={fetchStats} 
+          style={{
+            background: "#0d5fe2", color: "#fff", border: "none", padding: "8px 16px", borderRadius: "6px", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px"
+          }}
+        >
+          <FaSyncAlt /> Refresh
+        </button>
+      </div>
 
-    {/* ======== Recruiters Table ======== */}
-    {activeTab === "recruiters" && (
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Jobs Posted</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {recruiters.map(u => {
-            const userJobs = jobs.filter(
-              j => j.recruiter && j.recruiter._id === u._id
-            );
-
-            return (
-              <tr key={u._id}>
-                <td>{u.name}</td>
-                <td>
-                  {userJobs.length > 0
-                    ? userJobs.map(j => j.title).join(", ")
-                    : "No jobs"}
-                </td>
-                <td>{u.isActive ? "Active" : "Disabled"}</td>
-                <td>
-                  <button onClick={() => toggleUserStatus(u._id)}>
-                    {u.isActive ? "Disable" : "Enable"}
-                  </button>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    )}
-
-    {/* ======== Students Table ======== */}
-    {activeTab === "students" && (
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Applications</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {students.map(u => {
-            const userApplications = applications.filter(
-              a => a.studentId && a.studentId._id === u._id
-            );
-
-            return (
-              <tr key={u._id}>
-                <td>{u.name}</td>
-                <td>
-                  {userApplications.length > 0
-                    ? userApplications.map(a => a.jobId.title).join(", ")
-                    : "No applications"}
-                </td>
-                <td>{u.isActive ? "Active" : "Disabled"}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    )}
-  </div>
-);
-
+      {loading ? (
+        <div>Loading stats...</div>
+      ) : (
+        <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
+          {statsData.map((s, i) => (
+            <div
+              key={i}
+              style={{
+                flex: "1 1 200px",
+                background: s.color,
+                color: "#fff",
+                padding: "24px",
+                borderRadius: "12px",
+                display: "flex",
+                alignItems: "center",
+                gap: "16px",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                transition: "transform 0.2s, box-shadow 0.2s",
+                cursor: "default"
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.transform = "translateY(-6px)";
+                e.currentTarget.style.boxShadow = "0 8px 20px rgba(0,0,0,0.2)";
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)";
+              }}
+            >
+              <div style={{ fontSize: "2rem" }}>{s.icon}</div>
+              <div>
+                <div style={{ fontSize: "1.2rem", fontWeight: "600" }}>{s.value}</div>
+                <div>{s.label}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </AdminLayout>
+  );
 };
 
 export default AdminDashboard;

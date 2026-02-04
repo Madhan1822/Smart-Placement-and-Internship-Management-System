@@ -2,7 +2,7 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-// REGISTER CONTROLLER
+// ================= REGISTER =================
 exports.register = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -11,19 +11,23 @@ exports.register = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    const allowedRoles = ["student", "recruiter", "admin"];
+    if (!allowedRoles.includes(role.toLowerCase())) {
+      return res.status(400).json({ message: "Invalid role" });
+    }
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await User.create({
       name,
       email,
       password: hashedPassword,
-      role,
+      role: role.toLowerCase()
     });
 
     const token = jwt.sign(
@@ -37,29 +41,37 @@ exports.register = async (req, res) => {
         id: newUser._id,
         name: newUser.name,
         email: newUser.email,
-        role: newUser.role,
+        role: newUser.role
       },
-      token,
+      token
     });
   } catch (err) {
-    console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 };
 
+// ================= LOGIN =================
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ message: "Email and password required" });
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
     }
 
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "User not found" });
+    // 🚫 BLOCKED USER CHECK (NEW)
+    if (user.isActive === false) {
+      return res.status(403).json({
+        message: "You are blocked by admin"
+      });
+    }
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
 
     const token = jwt.sign(
       { id: user._id, role: user.role },
@@ -67,18 +79,16 @@ exports.login = async (req, res) => {
       { expiresIn: "1d" }
     );
 
-    // 🔹 important: must return user object exactly like this
-    res.status(200).json({
+    res.json({
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role,
+        role: user.role
       },
-      token,
+      token
     });
   } catch (err) {
-    console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 };

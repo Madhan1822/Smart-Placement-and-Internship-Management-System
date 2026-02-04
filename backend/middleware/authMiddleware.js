@@ -1,19 +1,38 @@
 const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 
-module.exports = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+module.exports = async (req, res, next) => {
+  const authHeader = req.header("Authorization");
+  const token = authHeader && authHeader.split(" ")[1];
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  if (!token) {
     return res.status(401).json({ message: "No token provided" });
   }
 
-  const token = authHeader.split(" ")[1];
-
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // { id, role }
+
+    // 🔥 CHECK USER IN DATABASE
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+
+    // 🔴 BLOCK DISABLED USERS
+    if (!user.isActive) {
+      return res.status(403).json({
+        message: "You are blocked by admin"
+      });
+    }
+
+    req.user = {
+      id: user._id,
+      role: user.role
+    };
+
     next();
-  } catch (error) {
-    res.status(401).json({ message: "Invalid token" });
+  } catch (err) {
+    return res.status(401).json({ message: "Invalid token" });
   }
 };

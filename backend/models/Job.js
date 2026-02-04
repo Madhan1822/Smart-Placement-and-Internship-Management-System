@@ -6,18 +6,23 @@ const jobSchema = new mongoose.Schema({
   location: String,
   description: String,
 
-  // 🔹 NEW: structured requirements
+  // 🔥 NEW FIELD
+  jobType: {
+    type: String,
+    enum: ["full-time", "internship"],
+    required: true
+  },
+
   requirements: {
     skills: [String],
     minCGPA: { type: Number, default: 0 },
-    keywords: [String],
     experience: String
   },
 
   recruiter: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required:true
+    required: true
   }
 }, { timestamps: true });
 

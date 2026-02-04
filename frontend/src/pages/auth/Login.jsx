@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
 const Login = () => {
@@ -32,13 +32,13 @@ const Login = () => {
       localStorage.setItem("token", res.data.token);
       setUser(res.data.user);
 
-      // redirect based on role
+      // ✅ CORRECT REDIRECTS
       switch (res.data.user.role) {
         case "student":
-          navigate("/student");
+          navigate("/student/dashboard");
           break;
         case "recruiter":
-          navigate("/recruiter");
+          navigate("/recruiter/dashboard");
           break;
         case "admin":
           navigate("/admin");
@@ -47,34 +47,42 @@ const Login = () => {
           setError("Invalid role");
       }
     } catch (err) {
-      console.error(err);
       setError(err.response?.data?.message || "Login failed");
     }
   };
 
   return (
+  <div className="auth-page">
     <div className="login-container">
       <form onSubmit={handleLogin}>
-        <h2>Login</h2>
+        <h2>Sign in</h2>
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <div className="auth-error">{error}</div>}
 
         <input
           type="email"
-          placeholder="Email"
+          placeholder="Email address"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
+
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button type="submit">Login</button>
+
+        <button type="submit">Sign in</button>
+
+        <p className="auth-footer">
+          New here? <Link to="/register">Create an account</Link>
+        </p>
       </form>
     </div>
-  );
+  </div>
+);
+
 };
 
 export default Login;

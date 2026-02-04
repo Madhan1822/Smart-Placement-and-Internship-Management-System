@@ -1,13 +1,11 @@
-import Jobs from "../../components/Jobs";
-import AppliedJobs from "../../components/AppliedJobs";
+import StudentLayout from "./StudentLayout";
 
 const StudentDashboard = () => {
   return (
-    <div>
-      <h1>Student Dashboard</h1>
-      <Jobs />
-      <AppliedJobs />
-    </div>
+    <StudentLayout>
+      <h1>Welcome to Student Dashboard</h1>
+      <p>Select an option from the sidebar to get started.</p>
+    </StudentLayout>
   );
 };
 
