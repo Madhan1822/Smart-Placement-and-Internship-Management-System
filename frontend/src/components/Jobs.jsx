@@ -18,7 +18,7 @@ const Jobs = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/jobs", {
+      .get("https://smart-placement-and-internship.onrender.com/api/jobs", {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(res => {
@@ -27,7 +27,7 @@ const Jobs = () => {
       });
 
     axios
-      .get("http://localhost:5000/api/applications/my", {
+      .get("https://smart-placement-and-internship.onrender.com/api/applications/my", {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(res => {
@@ -74,7 +74,7 @@ const Jobs = () => {
       setLoading(prev => ({ ...prev, [jobId]: true }));
 
       const res = await axios.post(
-        "http://localhost:5000/api/ai/check-eligibility-ai",
+        "https://smart-placement-and-internship.onrender.com/api/ai/check-eligibility-ai",
         { jobId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
