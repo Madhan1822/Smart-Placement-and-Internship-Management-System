@@ -6,10 +6,12 @@ const RecruiterApplicants = ({ jobId }) => {
   const token = localStorage.getItem("token");
 
   const fetchApplicants = () => {
-    axios.get(
-      `http://localhost:5000/api/recruiter/job/${jobId}/applicants`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    ).then(res => setApplications(res.data));
+    axios
+      .get(
+        `http://localhost:5000/api/recruiter/job/${jobId}/applicants`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      .then(res => setApplications(res.data));
   };
 
   useEffect(() => {
@@ -34,7 +36,6 @@ const RecruiterApplicants = ({ jobId }) => {
           <tr>
             <th>Name</th>
             <th>Email</th>
-            <th>Score</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
@@ -45,7 +46,6 @@ const RecruiterApplicants = ({ jobId }) => {
             <tr key={app._id}>
               <td>{app.studentId.name}</td>
               <td>{app.studentId.email}</td>
-              <td>{app.score}</td>
               <td>{app.status}</td>
               <td>
                 {app.status === "APPLIED" && (

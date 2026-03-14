@@ -12,8 +12,6 @@ exports.checkEligibilityAI = async (req, res) => {
     const studentId = req.user.id;
     const { jobId } = req.body;
 
-    const reasons = [];
-
     // ---------------- FETCH JOB ----------------
     const job = await Job.findById(jobId);
     if (!job) {
@@ -25,20 +23,26 @@ exports.checkEligibilityAI = async (req, res) => {
     if (!profile || !profile.resumeText) {
       return res.json({
         eligible: false,
-        reason: "Resume not uploaded"
+        reason: "Resume not uploaded",
+        type: "NO_RESUME"
       });
     }
 
     // ---------------- HARD RULES ----------------
 
     // ✅ CGPA CHECK
-    if (job.requirements?.minCGPA && profile.cgpa < job.requirements.minCGPA) {
-      reasons.push(
-        `CGPA ${profile.cgpa} is below required ${job.requirements.minCGPA}`
-      );
+    if (
+      job.requirements?.minCGPA &&
+      profile.cgpa < job.requirements.minCGPA
+    ) {
+      return res.json({
+        eligible: false,
+        reason: `CGPA ${profile.cgpa} is below required ${job.requirements.minCGPA}`,
+        type: "LOW_CGPA"
+      });
     }
 
-    // ✅ SKILLS CHECK using resume text
+    // ✅ SKILLS CHECK
     const requiredSkills = job.requirements?.skills || [];
     const resumeTextLower = profile.resumeText.toLowerCase();
 
@@ -47,14 +51,11 @@ exports.checkEligibilityAI = async (req, res) => {
     );
 
     if (missingSkills.length > 0) {
-      reasons.push(`Missing skills: ${missingSkills.join(", ")}`);
-    }
-
-    // ❌ FAIL FAST if hard rules fail
-    if (reasons.length > 0) {
       return res.json({
         eligible: false,
-        reason: reasons.join(" | ")
+        reason: `Missing skills: ${missingSkills.join(", ")}`,
+        type: "MISSING_SKILLS",
+        missingSkills
       });
     }
 
@@ -83,14 +84,13 @@ exports.checkEligibilityAI = async (req, res) => {
       }
     );
 
-    // HF returns array of similarity scores
     const score = hfResponse.data[0];
 
-    // AI threshold (you can adjust)
-    if (score < 0.45) {
+    if (score < 0.40) {
       return res.json({
         eligible: false,
-        reason: `AI similarity score too low (${score.toFixed(2)})`
+        reason: `AI similarity score too low (${score.toFixed(2)})`,
+        type: "LOW_AI_SCORE"
       });
     }
 
@@ -98,7 +98,7 @@ exports.checkEligibilityAI = async (req, res) => {
     return res.json({
       eligible: true,
       score,
-      reason: `Eligible ✅ (AI score ${score.toFixed(2)}, CGPA & skills matched)`
+      reason: `Eligible ✅ (AI score ${score.toFixed(2)})`
     });
 
   } catch (err) {

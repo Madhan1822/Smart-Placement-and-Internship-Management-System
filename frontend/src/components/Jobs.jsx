@@ -1,30 +1,31 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Jobs = () => {
   const [jobs, setJobs] = useState([]);
   const [jobType, setJobType] = useState("full-time");
   const [appliedJobs, setAppliedJobs] = useState([]);
-  const [eligibility, setEligibility] = useState({});
   const [loading, setLoading] = useState({});
   const [search, setSearch] = useState("");
+  const [eligibility, setEligibility] = useState({}); // ✅ ADDED
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const jobsPerPage = 4;
 
   const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch jobs
     axios
       .get("http://localhost:5000/api/jobs", {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(res => {
-        const filteredJobs = res.data.filter(
-          job => job.jobType === jobType
-        );
-        setJobs(filteredJobs);
+        const filtered = res.data.filter(job => job.jobType === jobType);
+        setJobs(filtered);
       });
 
-    // Fetch applied jobs
     axios
       .get("http://localhost:5000/api/applications/my", {
         headers: { Authorization: `Bearer ${token}` }
@@ -34,11 +35,21 @@ const Jobs = () => {
       });
   }, [token, jobType]);
 
-  // 🔍 SEARCH FILTER
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, jobType]);
+
   const filteredJobs = jobs.filter(job =>
     `${job.title} ${job.company} ${job.location}`
       .toLowerCase()
       .includes(search.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
+  const startIndex = (currentPage - 1) * jobsPerPage;
+  const currentJobs = filteredJobs.slice(
+    startIndex,
+    startIndex + jobsPerPage
   );
 
   // ---------------- APPLY JOB ----------------
@@ -53,7 +64,7 @@ const Jobs = () => {
       setAppliedJobs(prev => [...prev, id]);
       alert("Applied successfully");
     } catch (err) {
-      alert(err.response?.data?.message || "Error applying for job");
+      alert(err.response?.data?.message || "Error applying");
     }
   };
 
@@ -73,10 +84,13 @@ const Jobs = () => {
         [jobId]: {
           checked: true,
           eligible: res.data.eligible,
-          reason: res.data.reason
+          reason: res.data.reason,
+          type: res.data.type,
+          missingSkills: res.data.missingSkills
         }
       }));
-    } catch (err) {
+
+    } catch {
       alert("AI eligibility check failed");
     } finally {
       setLoading(prev => ({ ...prev, [jobId]: false }));
@@ -85,13 +99,11 @@ const Jobs = () => {
 
   return (
     <div className="jobs-table-container">
-
-      {/* CENTERED HEADER */}
       <h2 style={{ textAlign: "center", marginBottom: "14px" }}>
         Available Jobs
       </h2>
 
-      {/* SEARCH BAR */}
+      {/* SEARCH */}
       <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
         <input
           type="text"
@@ -107,16 +119,8 @@ const Jobs = () => {
         />
       </div>
 
-      {/* JOB TYPE TOGGLE – CENTERED */}
-      <div
-        className="job-type-toggle"
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          gap: "12px",
-          marginBottom: "24px"
-        }}
-      >
+      {/* JOB TYPE */}
+      <div style={{ display: "flex", justifyContent: "center", gap: "12px", marginBottom: "24px" }}>
         <button
           onClick={() => setJobType("full-time")}
           disabled={jobType === "full-time"}
@@ -132,85 +136,122 @@ const Jobs = () => {
         </button>
       </div>
 
-      {filteredJobs.length === 0 ? (
+      {currentJobs.length === 0 ? (
         <p style={{ textAlign: "center", color: "#6b7280" }}>
           No jobs available
         </p>
       ) : (
-        <table className="jobs-table">
-          <thead>
-            <tr>
-              <th>Job Title</th>
-              <th>Company</th>
-              <th>Location</th>
-              <th>Type</th>
-              <th>Action</th>
-            </tr>
-          </thead>
+        <>
+          <table className="jobs-table">
+            <thead>
+              <tr>
+                <th>Job Title</th>
+                <th>Company</th>
+                <th>Location</th>
+                <th>Type</th>
+                <th>Action</th>
+              </tr>
+            </thead>
 
-          <tbody>
-            {filteredJobs.map(job => {
-              const isApplied = appliedJobs.includes(job._id);
-              const aiResult = eligibility[job._id];
+            <tbody>
+              {currentJobs.map(job => {
+                const isApplied = appliedJobs.includes(job._id);
+                const aiResult = eligibility[job._id];
 
-              return (
-                <tr key={job._id}>
-                  <td>{job.title}</td>
-                  <td>{job.company}</td>
-                  <td>{job.location}</td>
-                  <td>{job.jobType === "full-time" ? "Full-Time" : "Internship"}</td>
+                return (
+                  <tr key={job._id}>
+                    <td>{job.title}</td>
+                    <td>{job.company}</td>
+                    <td>{job.location}</td>
+                    <td>{job.jobType}</td>
 
-                  <td>
-                    <div className="job-action">
+                    <td>
+                      <div>
 
-                      {!isApplied && (
-                        <button
-                          className="eligibility-btn"
-                          onClick={() => checkEligibility(job._id)}
-                          disabled={loading[job._id]}
-                        >
-                          {loading[job._id] ? "Checking..." : "Can I Apply?"}
-                        </button>
-                      )}
-
-                      {isApplied && (
-                        <button className="apply-btn" disabled>
-                          Applied
-                        </button>
-                      )}
-
-                      {!isApplied && aiResult?.checked && (
-                        aiResult.eligible ? (
+                        {!isApplied && (
                           <button
-                            className="apply-btn"
-                            onClick={() => applyJob(job._id)}
+                            onClick={() => checkEligibility(job._id)}
+                            disabled={loading[job._id]}
                           >
-                            Apply
+                            {loading[job._id] ? "Checking..." : "Can I Apply?"}
                           </button>
-                        ) : (
-                          <button className="apply-btn" disabled>
-                            ❌ Not Eligible
-                          </button>
-                        )
-                      )}
+                        )}
 
-                      {aiResult?.checked && (
-                        <div
-                          className={`eligibility-text ${
-                            aiResult.eligible ? "yes" : "no"
-                          }`}
-                        >
-                          {aiResult.reason}
-                        </div>
-                      )}
+                        {isApplied && <button disabled>Applied</button>}
 
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                        {!isApplied && aiResult?.checked && (
+                          aiResult.eligible ? (
+                            <button onClick={() => applyJob(job._id)}>
+                              Apply
+                            </button>
+                          ) : (
+                            <>
+                              <button disabled>❌ Not Eligible</button>
+
+                              {/* ✅ Upgrade Skill Button */}
+                              {aiResult.type === "MISSING_SKILLS" && (
+                                <button
+                                  style={{
+                                    marginLeft: "8px",
+                                    backgroundColor: "#4f46e5",
+                                    color: "white",
+                                    border: "none",
+                                    padding: "6px 10px",
+                                    borderRadius: "6px",
+                                    cursor: "pointer"
+                                  }}
+                                  onClick={() =>
+                                    navigate("/learning", {
+                                      state: {
+                                        skills: aiResult.missingSkills
+                                      }
+                                    })
+                                  }
+                                >
+                                  Upgrade Your Skills 🚀
+                                </button>
+                              )}
+                            </>
+                          )
+                        )}
+
+                        {aiResult?.checked && (
+                          <div style={{ marginTop: "6px", fontSize: "13px" }}>
+                            {aiResult.reason}
+                          </div>
+                        )}
+
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+
+          {/* PAGINATION */}
+          {totalPages > 1 && (
+            <div style={{ textAlign: "center", marginTop: "30px" }}>
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(p => p - 1)}
+              >
+                Prev
+              </button>
+
+              <span style={{ margin: "0 14px" }}>
+                {currentPage} / {totalPages}
+              </span>
+
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(p => p + 1)}
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

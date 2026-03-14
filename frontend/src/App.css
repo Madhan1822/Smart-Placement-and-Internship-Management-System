@@ -380,3 +380,13 @@ th {
   margin-top: 20px;
 }
 
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+  gap: 8px;
+}
+
+.pagination button.active {
+  background: #084298;
+}

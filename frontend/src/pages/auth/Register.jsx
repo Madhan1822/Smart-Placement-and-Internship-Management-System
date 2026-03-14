@@ -82,7 +82,6 @@ return (
         >
           <option value="student">Student</option>
           <option value="recruiter">Recruiter</option>
-          <option value="admin">Admin</option>
         </select>
 
         <button type="submit">Create account</button>

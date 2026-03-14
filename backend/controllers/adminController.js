@@ -8,6 +8,10 @@ exports.getAdminStats = async (req, res) => {
     const totalUsers = await User.countDocuments();
     const totalStudents = await User.countDocuments({ role: "student" });
     const totalRecruiters = await User.countDocuments({ role: "recruiter" });
+
+    const activeUsers = await User.countDocuments({ isActive: true });
+    const disabledUsers = await User.countDocuments({ isActive: false });
+
     const totalJobs = await Job.countDocuments();
     const totalApplications = await Application.countDocuments();
 
@@ -15,10 +19,13 @@ exports.getAdminStats = async (req, res) => {
       totalUsers,
       totalStudents,
       totalRecruiters,
+      activeUsers,
+      disabledUsers,
       totalJobs,
       totalApplications
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Stats error" });
   }
 };
@@ -136,35 +143,3 @@ exports.deleteLearningTopic = async (req, res) => {
   }
 };
 
-exports.getAdminStats = async (req, res) => {
-  try {
-    const totalUsers = await User.countDocuments();
-    const totalStudents = await User.countDocuments({ role: "student" });
-    const totalRecruiters = await User.countDocuments({ role: "recruiter" });
-
-    const activeUsers = await User.countDocuments({ isActive: true });
-    const disabledUsers = await User.countDocuments({ isActive: false });
-
-    const totalJobs = await Job.countDocuments();
-    const totalApplications = await Application.countDocuments();
-
-    res.json({
-      users: {
-        total: totalUsers,
-        students: totalStudents,
-        recruiters: totalRecruiters,
-        active: activeUsers,
-        disabled: disabledUsers
-      },
-      jobs: {
-        total: totalJobs
-      },
-      applications: {
-        total: totalApplications
-      }
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Stats error" });
-  }
-};
