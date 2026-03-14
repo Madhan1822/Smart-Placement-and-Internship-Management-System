@@ -16,7 +16,7 @@ const Learning = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/admin/learning", {
+      .get("https://smart-placement-and-internship.onrender.com/api/admin/learning", {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(res => {

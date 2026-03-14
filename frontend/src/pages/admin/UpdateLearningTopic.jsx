@@ -14,7 +14,7 @@ const UpdateLearningTopic = () => {
   useEffect(() => {
     const fetchTopic = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/admin/learning/${id}`, {
+        const res = await axios.get(`https://smart-placement-and-internship.onrender.com/api/admin/learning/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -34,7 +34,7 @@ const UpdateLearningTopic = () => {
     e.preventDefault();
     try {
       await axios.put(
-        `http://localhost:5000/api/admin/learning/${id}`,
+        `https://smart-placement-and-internship.onrender.com/api/admin/learning/${id}`,
         { title, learningLinks, practiceLinks },
         { headers: { Authorization: `Bearer ${token}` } }
       );

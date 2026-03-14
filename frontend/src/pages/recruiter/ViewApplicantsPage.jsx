@@ -12,7 +12,7 @@ const ViewApplicantsPage = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/recruiter/my-jobs", {
+      .get("https://smart-placement-and-internship.onrender.com/api/recruiter/my-jobs", {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(res => setJobs(res.data));

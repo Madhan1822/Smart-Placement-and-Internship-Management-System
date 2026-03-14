@@ -10,7 +10,7 @@ const RecruiterProfilePage = () => {
   const token = localStorage.getItem("token");
 
   const fetchProfile = useCallback(() => {
-    axios.get("http://localhost:5000/api/recruiter/profile", {
+    axios.get("https://smart-placement-and-internship.onrender.com/api/recruiter/profile", {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then(res => setProfile(res.data));
@@ -27,7 +27,7 @@ const RecruiterProfilePage = () => {
 
   const handleSave = async () => {
     await axios.put(
-      "http://localhost:5000/api/recruiter/profile",
+      "https://smart-placement-and-internship.onrender.com/api/recruiter/profile",
       {
         companyName: editProfile.companyName,
         description: editProfile.description

@@ -20,7 +20,7 @@ const RecruiterApplicants = ({ jobId }) => {
 
   const updateStatus = async (id, status) => {
     await axios.put(
-      `http://localhost:5000/api/applications/${id}/status`,
+      `https://smart-placement-and-internship.onrender.com/api/applications/${id}/status`,
       { status },
       { headers: { Authorization: `Bearer ${token}` } }
     );

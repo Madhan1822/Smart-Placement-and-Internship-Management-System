@@ -56,7 +56,7 @@ const Jobs = () => {
   const applyJob = async (id) => {
     try {
       await axios.post(
-        `http://localhost:5000/api/applications/apply/${id}`,
+        `https://smart-placement-and-internship.onrender.com/api/applications/apply/${id}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

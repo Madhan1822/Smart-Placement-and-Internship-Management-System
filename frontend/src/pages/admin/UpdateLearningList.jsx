@@ -11,7 +11,7 @@ const UpdateLearningList = () => {
   useEffect(() => {
     const fetchTopics = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/admin/learning", {
+        const res = await axios.get("https://smart-placement-and-internship.onrender.com/api/admin/learning", {
           headers: { Authorization: `Bearer ${token}` }
         });
         setTopics(res.data);
@@ -29,7 +29,7 @@ const UpdateLearningList = () => {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/admin/learning/${id}`, {
+      await axios.delete(`https://smart-placement-and-internship.onrender.com/api/admin/learning/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setTopics(topics.filter(t => t._id !== id));

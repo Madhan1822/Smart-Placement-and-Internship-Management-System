@@ -37,7 +37,7 @@ const PostJobPage = () => {
 
     try {
       await axios.post(
-        "http://localhost:5000/api/jobs",
+        "https://smart-placement-and-internship.onrender.com/api/jobs",
         payload,
         { headers: { Authorization: `Bearer ${token}` } }
       );

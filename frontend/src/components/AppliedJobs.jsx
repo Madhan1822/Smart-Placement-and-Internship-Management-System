@@ -6,7 +6,7 @@ const AppliedJobs = () => {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/applications/applied", {
+    axios.get("https://smart-placement-and-internship.onrender.com/api/applications/applied", {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then(res => setApplications(res.data))

@@ -12,7 +12,7 @@ const CreateLearningTopic = () => {
     e.preventDefault();
 
     await axios.post(
-      "http://localhost:5000/api/admin/learning",
+      "https://smart-placement-and-internship.onrender.com/api/admin/learning",
       { title, learningLinks, practiceLinks },
       { headers: { Authorization: `Bearer ${token}` } }
     );

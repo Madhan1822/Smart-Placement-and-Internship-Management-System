@@ -11,7 +11,7 @@ const AdminDashboard = () => {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/api/admin/stats", {
+      const res = await axios.get("https://smart-placement-and-internship.onrender.com/api/admin/stats", {
         headers: { Authorization: `Bearer ${token}` }
       });
       setStats(res.data);

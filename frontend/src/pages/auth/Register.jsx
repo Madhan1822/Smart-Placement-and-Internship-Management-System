@@ -33,7 +33,7 @@ const Register = () => {
     }
 
     try {
-      await axios.post("http://localhost:5000/api/auth/register", form);
+      await axios.post("https://smart-placement-and-internship.onrender.com/api/auth/register", form);
 
       setSuccess("Registration successful! Redirecting to login...");
       setTimeout(() => navigate("/login"), 1500);

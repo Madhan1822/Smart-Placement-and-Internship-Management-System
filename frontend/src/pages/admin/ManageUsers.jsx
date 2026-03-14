@@ -13,13 +13,13 @@ const ManageUsers = () => {
     const fetchData = async () => {
       try {
         const [u, j, a] = await Promise.all([
-          axios.get("http://localhost:5000/api/admin/users", {
+          axios.get("https://smart-placement-and-internship.onrender.com/api/admin/users", {
             headers: { Authorization: `Bearer ${token}` }
           }),
-          axios.get("http://localhost:5000/api/admin/jobs", {
+          axios.get("https://smart-placement-and-internship.onrender.com/api/admin/jobs", {
             headers: { Authorization: `Bearer ${token}` }
           }),
-          axios.get("http://localhost:5000/api/admin/applications", {
+          axios.get("https://smart-placement-and-internship.onrender.com/api/admin/applications", {
             headers: { Authorization: `Bearer ${token}` }
           })
         ]);
@@ -38,7 +38,7 @@ const ManageUsers = () => {
   // 🔥 ENABLE / DISABLE USER
   const toggleUserStatus = async (id) => {
     const res = await axios.put(
-      `http://localhost:5000/api/admin/user/${id}/toggle`,
+      `https://smart-placement-and-internship.onrender.com/api/admin/user/${id}/toggle`,
       {},
       { headers: { Authorization: `Bearer ${token}` } }
     );

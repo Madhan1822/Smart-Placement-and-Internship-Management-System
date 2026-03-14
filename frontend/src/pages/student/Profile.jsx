@@ -11,7 +11,7 @@ const Profile = () => {
 
   const fetchProfile = useCallback(() => {
     axios
-      .get("http://localhost:5000/api/student/profile", {
+      .get("https://smart-placement-and-internship.onrender.com/api/student/profile", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then(res => setProfile(res.data))
@@ -54,7 +54,7 @@ const Profile = () => {
         formData.append("resume", editProfile.resume);
       }
 
-      await axios.put("http://localhost:5000/api/student/profile", formData, {
+      await axios.put("https://smart-placement-and-internship.onrender.com/api/student/profile", formData, {
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
       });
 
@@ -89,7 +89,7 @@ const Profile = () => {
         <input type="file" accept=".pdf" disabled={!isEditing} onChange={(e) => setEditProfile({ ...editProfile, resume: e.target.files[0] })} />
 
         {profile.resume && (
-          <a href={`http://localhost:5000/${profile.resume}`} target="_blank" rel="noopener noreferrer">View Resume</a>
+          <a href={`https://smart-placement-and-internship.onrender.com/${profile.resume}`} target="_blank" rel="noopener noreferrer">View Resume</a>
         )}
 
         <label>Skills (comma separated):</label>
