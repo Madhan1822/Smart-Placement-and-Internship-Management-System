@@ -19,7 +19,7 @@ const Chatbot = () => {
     try {
 
       const res = await axios.post(
-        "https://smart-placement-and-internship.onrender.com/api/ai/chat",
+        "https://smart-placement-and-internship.onrender.com/api/chats/chat",
         { message: input }
       );
 
