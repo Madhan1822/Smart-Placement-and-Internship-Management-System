@@ -46,7 +46,7 @@ const Chatbot = () => {
           position: "fixed",
           bottom: "20px",
           right: "20px",
-          background: "#7c3aed",
+          background: "#0d5fe2",
           color: "white",
           width: "60px",
           height: "60px",
@@ -82,7 +82,7 @@ const Chatbot = () => {
 
           <div
             style={{
-              background: "#7c3aed",
+              background: "#0d5fe2",
               color: "white",
               padding: "10px",
               borderTopLeftRadius: "10px",
@@ -117,7 +117,7 @@ const Chatbot = () => {
             <button
               onClick={sendMessage}
               style={{
-                background: "#7c3aed",
+                background: "#0d5fe2",
                 color: "white",
                 border: "none",
                 padding: "8px 12px"
