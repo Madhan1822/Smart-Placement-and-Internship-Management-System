@@ -23,6 +23,7 @@ app.use("/api/admin", require("./routes/adminRoutes"));
 app.use("/api/jobs", require("./routes/jobRoutes"));
 app.use("/api/applications", require("./routes/applicationRoutes"));
 app.use("/api/ai", require("./routes/aiRoutes"));
+app.use("/api/ai/chat", require("./routes/chatRoutes"));
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
