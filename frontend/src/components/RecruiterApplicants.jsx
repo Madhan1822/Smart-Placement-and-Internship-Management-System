@@ -8,7 +8,7 @@ const RecruiterApplicants = ({ jobId }) => {
   const fetchApplicants = () => {
     axios
       .get(
-        `http://localhost:5000/api/recruiter/job/${jobId}/applicants`,
+        `https://smart-placement-and-internship.onrender.com/api/recruiter/job/${jobId}/applicants`,
         { headers: { Authorization: `Bearer ${token}` } }
       )
       .then(res => setApplications(res.data));
